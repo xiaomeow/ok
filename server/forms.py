@@ -76,6 +76,8 @@ class AssignmentForm(BaseForm):
                                validators=[validators.required()])
     name = StringField('Offering (example: cal/cs61a/fa16/proj01)',
                        validators=[validators.required()])
+    canvas_id = StringField('bCourses Assignment ID (e.g. 1234567)',
+                       validators=[validators.optional()])
     due_date = DateTimeField('Due Date (Course Time)',
                              validators=[validators.required()])
     lock_date = DateTimeField('Lock Date (Course Time)',

@@ -271,6 +271,7 @@ class Assignment(Model):
     name = db.Column(db.String(255), index=True, nullable=False, unique=True)
     course_id = db.Column(db.ForeignKey("course.id"), index=True,
                           nullable=False)
+    canvas_id = db.Column(db.Integer)
     display_name = db.Column(db.String(255), nullable=False)
     due_date = db.Column(db.DateTime(timezone=True), nullable=False)
     lock_date = db.Column(db.DateTime(timezone=True), nullable=False)
