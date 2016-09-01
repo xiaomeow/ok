@@ -27,6 +27,7 @@
               <div class="box-body">
                 {% call forms.render_form(form, action_url="", action_text='Edit Course', class_='form') %}
                     {{ forms.render_field(form.display_name, label_visible=true, placeholder='CS 61A', type='text') }}
+                    {{ forms.render_field(form.canvas_id, label_visible=true, placeholder='', type='text', tooltip_text='This is needed in order to upload scores directly to bCourses. To find the bCourses Course ID, visit this course on bCourses and look for the 7 digit course ID in the URL. (e.g. https://bcourses.berkeley.edu/ courses/1234567') }}
                     {{ forms.render_field(form.institution, label_visible=true, placeholder='UC Berkeley', type='text') }}
                     {{ forms.render_field(form.website, label_visible=true, placeholder='http://cs61a.org/', type='text') }}
                     <!-- {{ forms.render_field(form.timezone, label_visible=true, type='select') }} -->

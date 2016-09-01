@@ -91,17 +91,20 @@
                         </div>
                         <!-- /.row -->
 
-
                       </div>
+
                       <!-- ./box-body -->
                       <div class="box-footer">
                         <div class="pull-left">
-                                  <a href="{{ url_for('.export_scores', cid=current_course.id, aid=assignment.id) }}" type="button" class="btn btn-info btn-flat">
-                                        <i class="fa fa-download"></i> Download Scores
-                                  </a>
-                                  <a href="{{ url_for('.autograde', cid=current_course.id, aid=assignment.id) }}" type="button" class="btn btn-info btn-flat">
-                                        <i class="fa fa-send"></i> Autograde
-                                  </a>
+                          <a href="{{ url_for('.export_scores', cid=current_course.id, aid=assignment.id) }}" type="button" class="btn btn-info btn-flat">
+                            <i class="fa fa-download"></i> Download Scores
+                          </a>
+                          <a href="{{ url_for('.export_to_bcourses', cid=current_course.id, aid=assignment.id) }}" class="btn btn-info btn-flat">
+                            <i class="fa fa-cloud-upload"></i> Upload to bCourses
+                          </a>
+                          <a href="{{ url_for('.autograde', cid=current_course.id, aid=assignment.id) }}" type="button" class="btn btn-info btn-flat">
+                            <i class="fa fa-send"></i> Autograde
+                          </a>
                         </div>
                         <div class="pull-right">
                                   <a href="{{ url_for('.assignment_stats', cid=current_course.id, aid=assignment.id) }}" type="button" class="btn btn-info btn-flat">

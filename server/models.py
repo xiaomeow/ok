@@ -207,6 +207,7 @@ class User(Model, UserMixin):
 class Course(Model):
     id = db.Column(db.Integer, primary_key=True)
     # offering - E.g., 'cal/cs61a/fa14'
+    canvas_id = db.Column(db.Integer)
     offering = db.Column(db.String(255), nullable=False, unique=True, index=True)
     institution = db.Column(db.String(255), nullable=False)  # E.g., 'UC Berkeley'
     display_name = db.Column(db.String(255), nullable=False)

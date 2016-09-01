@@ -9,11 +9,15 @@
     Example usage:
         {{ macros.render_field(form.email, placeholder='Input email', type='email') }}
 #}
-{% macro render_field(field, label_visible=true, class_='form-control') -%}
+{% macro render_field(field, label_visible=true, class_='form-control', tooltip_text='') -%}
     <div class="form-group {% if field.errors %}has-error{% endif %} {{ kwargs.pop('class_', '') }}">
         {% if (field.type != 'HiddenField' and field.type !='CSRFTokenField') and label_visible %}
             <label for="{{ field.id }}" class="control-label">{{ field.label }}</label>
         {% endif %}
+        {% if tooltip_text %}
+            <i class='fa fa-question-circle' data-toggle="tooltip" data-placement="right" title="{{ tooltip_text }}"></i>
+        {% endif %}
+
        {% if field.description %}
             <p class="help-block">{{ field.description }}</p>
         {% endif %}

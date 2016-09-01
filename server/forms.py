@@ -290,6 +290,8 @@ class ClientForm(BaseForm):
 class NewCourseForm(BaseForm):
     offering = StringField('Offering (example: cal/cs61a/sp16)',
                            validators=[validators.required()])
+    canvas_id = StringField('bCourses Course ID (e.g. 1234567)',
+                           validators=[validators.optional()])
     institution = StringField('School (e.g. UC Berkeley)',
                            validators=[validators.optional()])
     display_name = StringField('Course Name (e.g CS61A)',
@@ -319,8 +321,9 @@ class NewCourseForm(BaseForm):
 class CourseUpdateForm(BaseForm):
     institution = StringField('School (e.g. UC Berkeley)',
                            validators=[validators.optional()])
-    display_name = StringField('Course Name (e.g CS61A)',
+    display_name = StringField('Course Name (e.g. CS61A)',
                            validators=[validators.required()])
+    canvas_id = StringField('bCourses Course ID (e.g. 1234567)', validators=[validators.optional()])
     website = StringField('Course Website',
                            validators=[validators.optional(), validators.url()])
     active = BooleanField('Activate Course', default=True)
