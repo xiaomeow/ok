@@ -6,6 +6,7 @@ from io import StringIO
 import os
 import random
 import re
+import requests
 from urllib.parse import urlparse, urljoin
 
 from flask import render_template, url_for
@@ -192,3 +193,19 @@ def is_valid_endpoint(endpoint, valid_format):
 def generate_secret_key(length=31):
     """Generates a random secret, as a string."""
     return generate_token(length=length)
+
+def request(http_method, url, headers, verbose=True):
+    responses = []
+    while True:
+        if verbose:
+            print(url)
+        response = requests.request(http_method, url, headers=headers)
+        responses += response.json()
+
+        # pagination
+        next_url = [l for l in response.headers['link'].split(',') if l.endswith('rel="next"')]
+        if not next_url:
+            break
+        next_url = next_url[0]
+        url = next_url[next_url.index('<')+1:next_url.index('>')]
+    return responses
