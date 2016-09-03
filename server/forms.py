@@ -9,7 +9,7 @@ import pytz
 import datetime as dt
 
 from server import utils
-from server.models import Assignment, Course
+from server.models import Assignment, Course, CanvasAssignment, db
 from server.constants import (VALID_ROLES, GRADE_TAGS, COURSE_ENDPOINT_FORMAT,
                               TIMEZONE, STUDENT_ROLE, ASSIGNMENT_ENDPOINT_FORMAT)
 
@@ -76,7 +76,7 @@ class AssignmentForm(BaseForm):
                                validators=[validators.required()])
     name = StringField('Offering (example: cal/cs61a/fa16/proj01)',
                        validators=[validators.required()])
-    canvas_id = StringField('bCourses Assignment ID (e.g. 1234567)',
+    canvas_assignments_string = StringField('bCourses Assignment IDs and Score Kind',
                        validators=[validators.optional()])
     due_date = DateTimeField('Due Date (Course Time)',
                              validators=[validators.required()])
@@ -102,9 +102,21 @@ class AssignmentForm(BaseForm):
     def populate_obj(self, obj):
         """ Updates obj attributes based on form contents. """
 
-        super(AssignmentForm, self).populate_obj(obj)
         obj.due_date = utils.server_time_obj(self.due_date.data, self.course)
         obj.lock_date = utils.server_time_obj(self.lock_date.data, self.course)
+
+        for canvas_assignment in obj.canvas_assignments:
+            db.session.delete(canvas_assignment)
+        obj.canvas_assignments = []
+
+        canvas_assignments = self.canvas_assignments_string.data.split(',')
+        for canvas_assignment in canvas_assignments:
+            start_index = canvas_assignment.index('(')
+            kind = canvas_assignment[:start_index]
+            canvas_id = canvas_assignment[start_index+1:-1]
+            obj.canvas_assignments.append(CanvasAssignment(obj.id, canvas_id, kind))
+
+        super(AssignmentForm, self).populate_obj(obj)
 
     def validate(self):
         check_validate = super(AssignmentForm, self).validate()

@@ -257,6 +257,22 @@ class Course(Model):
                             .all()
                             )]
 
+class CanvasAssignment(Model):
+    def __init__(self, assignment_id, canvas_id, score_kind):
+        super()
+        self.assignment_id = assignment_id
+        self.canvas_id = canvas_id
+        self.score_kind = score_kind
+
+    id = db.Column(db.Integer, primary_key=True)
+    canvas_id = db.Column(db.Integer)
+    score_kind = db.Column(db.String(255))
+    assignment_id = db.Column(db.Integer, db.ForeignKey("assignment.id"),
+                                nullable=False)
+
+    def __str__(self):
+        return "{kind}({id})".format(kind=self.score_kind, id=self.canvas_id)
+
 class Assignment(Model):
     """Assignments are particular to courses and have unique names.
         name - cal/cs61a/fa14/proj1
@@ -271,7 +287,8 @@ class Assignment(Model):
     name = db.Column(db.String(255), index=True, nullable=False, unique=True)
     course_id = db.Column(db.ForeignKey("course.id"), index=True,
                           nullable=False)
-    canvas_id = db.Column(db.Integer)
+    canvas_assignments = db.relationship("CanvasAssignment", backref="assignment")
+    canvas_assignments_string = db.Column(db.String(255))
     display_name = db.Column(db.String(255), nullable=False)
     due_date = db.Column(db.DateTime(timezone=True), nullable=False)
     lock_date = db.Column(db.DateTime(timezone=True), nullable=False)
