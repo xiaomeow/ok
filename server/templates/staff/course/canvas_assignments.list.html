@@ -1,0 +1,37 @@
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">{{ title }}</h3>
+    <div class="box-tools pull-right">
+       <a href="{{ url_for('.canvas_assignment', cid=current_course.id, aid=assignment.id) }}" type="button" class="btn btn-default btn-flat">
+         <i class="fa fa-copy"></i> Add bCourses Assignment
+      </a>
+      <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+        <i class="fa fa-minus"></i>
+      </button>
+    </div>
+  </div>
+    <!-- /.box-header -->
+  <div class="box-body table-responsive table-loading" id="{{ title }}-list">
+      <table class="table table-hover">
+          <thead>
+              <th class="sort" data-sort="email">bCourse Assignment ID</th>
+              <th class="sort" data-sort="name">Score Kind</th>
+              <th data-sort="unenroll">Action</th>
+          </thead>
+
+          <tbody class="list">
+              {%- for item in canvas_assignments %}
+              <tr>
+                  <td class="canvas_id">{{ item.canvas_id }}</td>
+                  <td class="score_kind">{{ item.score_kind }}</td>
+                  <td class="delete">
+                    {% call forms.render_form_bare(delete_canvas_assignment_form, action_url=url_for('.delete_canvas_assignment', cid=current_course.id, aid=assignment.id, caid=item.id), class_='form') %}
+                        <button class='btn btn-sm btn-danger' data-confirm='Are you sure you want to delete this bCourses Assignment?'><i class='fa fa-trash-o'></i></button>
+                    {% endcall %}
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  </div>
+</div>

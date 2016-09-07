@@ -58,6 +58,17 @@ class BaseForm(Form):
                 filters.append(strip_whitespace)
             return unbound_field.bind(form=form, filters=filters, **options)
 
+class CanvasAssignmentForm(BaseForm):
+
+    def __init__(self, assignment, obj=None, **kwargs):
+        self.assignment = assignment
+        self.obj = obj
+        super(CanvasAssignmentForm, self).__init__(obj=obj, **kwargs)
+
+    canvas_id = StringField('bCourses Assignment ID',
+                            validators=[validators.required()])
+    score_kind = StringField('Score Type (e.g. Composition)',
+                            validators=[validators.required()])
 
 class AssignmentForm(BaseForm):
 
@@ -76,8 +87,6 @@ class AssignmentForm(BaseForm):
                                validators=[validators.required()])
     name = StringField('Offering (example: cal/cs61a/fa16/proj01)',
                        validators=[validators.required()])
-    canvas_assignments_string = StringField('bCourses Assignment IDs and Score Kind',
-                       validators=[validators.optional()])
     due_date = DateTimeField('Due Date (Course Time)',
                              validators=[validators.required()])
     lock_date = DateTimeField('Lock Date (Course Time)',
@@ -104,18 +113,6 @@ class AssignmentForm(BaseForm):
 
         obj.due_date = utils.server_time_obj(self.due_date.data, self.course)
         obj.lock_date = utils.server_time_obj(self.lock_date.data, self.course)
-
-        for canvas_assignment in obj.canvas_assignments:
-            db.session.delete(canvas_assignment)
-        obj.canvas_assignments = []
-
-        canvas_assignments = self.canvas_assignments_string.data.split(',')
-        for canvas_assignment in canvas_assignments:
-            start_index = canvas_assignment.index('(')
-            kind = canvas_assignment[:start_index]
-            canvas_id = canvas_assignment[start_index+1:-1]
-            obj.canvas_assignments.append(CanvasAssignment(obj.id, canvas_id, kind))
-
         super(AssignmentForm, self).populate_obj(obj)
 
     def validate(self):

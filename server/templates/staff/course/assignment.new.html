@@ -31,8 +31,6 @@
             <div class="box-body">
               {% call forms.render_form(form, action_url="", action_text='Create Assignment', class_='form') %}
                   {{ forms.render_field(form.display_name, label_visible=true, placeholder='Hog', type='text') }}
-                  {{ forms.render_field(form.canvas_id, label_visible=true,
-                  placeholder='1234567', type='text', tooltip_text='This is needed in order to upload scores directly to bCourses. To find the bCourses assignment ID, visit this assignment on bCourses and look for the 7 digit assignment ID in the URL. Example: https://bcourses.berkeley.edu/ courses/<Course-ID>/ assignments/<Assignment-ID>')}}
                   {{ forms.render_field(form.name, label_visible=true, value=current_course.offering + '/', placeholder='cal/cs61a/fa16/proj01', type='text') }}
                   {{ forms.render_field(form.max_group_size, label_visible=true, type='number', min='1', value='1') }}
                   {{ forms.render_field(form.due_date, label_visible=true, value=utils.new_due_date(current_course), type='text', class='form-control datepicker') }}

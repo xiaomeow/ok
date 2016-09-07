@@ -366,7 +366,54 @@ def assignment(cid, aid):
 
     return render_template('staff/course/assignment.html', assignment=assign,
                            form=form, courses=courses, stats=stats,
-                           current_course=current_course)
+                           current_course=current_course, 
+                           delete_canvas_assignment_form=forms.CSRFForm())
+
+@admin.route("/course/<int:cid>/assignments/<int:aid>/canvas/new",
+              methods=['GET', 'POST'])
+@is_staff(course_arg='cid')
+def canvas_assignment(cid, aid):
+    courses, current_course = get_courses(cid)
+    assign = Assignment.query.filter_by(id=aid, course_id=cid).one_or_none()
+    if not assign:
+        return abort(404)
+    if not Assignment.can(None, current_user, 'canvas'):
+        flash('Insufficient permissions', 'error')
+        return abort(401)
+
+    form = forms.CanvasAssignmentForm(assignment=assign)
+    if form.validate_on_submit():
+        import pdb; pdb.set_trace();
+        model = CanvasAssignment(assignment_id=aid)
+        form.populate_obj(model)
+        db.session.add(model)
+        db.session.commit()
+
+        flash("bcourses assignment created successfully.", "success")
+        return redirect(url_for(".course_assignments", cid=cid))       
+
+    return render_template('staff/course/canvas_assignment.html', 
+        assignment=assign, current_course=current_course, courses=courses, form=form)
+
+@admin.route("/course/<int:cid>/assignments/<int:aid>/canvas/<int:caid>/delete", methods=['POST'])
+@is_staff(course_arg='cid')
+def delete_canvas_assignment(cid, aid, caid):
+    courses, current_course = get_courses(cid)
+    assign = Assignment.query.filter_by(id=aid, course_id=cid).one_or_none()
+    canvas_assignment = CanvasAssignment.query.filter_by(id=caid).one_or_none()
+
+    if not Assignment.can(None, current_user, 'canvas'):
+        flash('Insufficient permissions', 'error')
+        return abort(401)
+
+    if canvas_assignment:
+        db.session.delete(canvas_assignment)
+        db.session.commit()
+        flash("bCourses Assignment has been removed.", "success")
+    else:
+        flash("bCourses Assignment not found.", "warning")
+
+    return redirect(url_for(".assignment", cid=cid, aid=assign.id))
 
 @admin.route("/course/<int:cid>/assignments/<int:aid>/stats")
 @is_staff(course_arg='cid')
