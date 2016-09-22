@@ -23,7 +23,7 @@ from datetime import timedelta
 import json
 import logging
 
-from server.constants import VALID_ROLES, STUDENT_ROLE, STAFF_ROLES, TIMEZONE
+from server.constants import VALID_ROLES, STUDENT_ROLE, STAFF_ROLES, TIMEZONE, GRADE_TAGS
 from server.extensions import cache
 from server.utils import encode_id, chunks
 
@@ -264,7 +264,7 @@ class Assignment(Model):
         lock_date - DEADLINE+1 (Hard Deadline for submissions)
         url - cs61a.org/proj/hog/hog.zip
         flagged - User has indicated this one should be graded and not others
-        published - grades are either hidden from or public to students
+        grade_visibility - grades are either hidden from or certain grades are published to students
     """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), index=True, nullable=False, unique=True)
@@ -285,10 +285,10 @@ class Assignment(Model):
     files = db.Column(JsonBlob)  # JSON object mapping filenames to contents
     course = db.relationship("Course", backref="assignments")
 
-    publish_tags = [tag if tag != 'private' else 'hidden' for tag in GRADE_TAGS]
-    grades_published = db.Column(db.String(255), nullable=False, default="hidden")
+    publish_tags = [tag.title() if tag != 'private' else 'Hidden' for tag in GRADE_TAGS]
+    grade_visibility = db.Column(db.String(255), nullable=False, default="Hidden")
     __table_args__ = (
-        db.CheckConstraint(grades_published.in_(grades_published))
+        db.CheckConstraint(grade_visibility.in_(publish_tags)),
     )
 
 
@@ -617,10 +617,11 @@ class Assignment(Model):
             backup.flagged = False
 
     @transaction
-    def publish_grade(self, ):
+    def publish_grades(self, tag):
         """Publish student grades for the assignment."""
-        if not self.grades_published:
-            self.grades_published = True
+        self.grade_visibility = tag
+        db.session.add(self)
+        db.session.commit()
 
 
 class Enrollment(Model):
