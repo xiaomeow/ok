@@ -10,7 +10,7 @@ from server.utils import encode_id
 from server import jobs
 
 @jobs.background_job
-def submit_to_moss(moss_id=None, file_regex="*", assignment_id=None, language=None):
+def submit_to_moss(moss_id=None, file_regex=".*", assignment_id=None, language=None):
     logger = jobs.get_job_logger()
     logger.info('Starting MOSS Export...')
 
@@ -29,8 +29,10 @@ def submit_to_moss(moss_id=None, file_regex="*", assignment_id=None, language=No
             subm_keys.add(subm['backup']['id'])
 
         if subm['group']:
+            group_members = subm['group']['group_member_emails'] or []
+            group_members.append(subm['user']['email'])
             logger.info("{} -> {}".format(encode_id(subm['backup']['id']),
-                                          subm['group']['group_member_emails']))
+                                          ', '.join(group_members)))
         else:
             logger.info("{} -> {}".format(encode_id(subm['backup']['id']),
                                           subm['user']['email']))
