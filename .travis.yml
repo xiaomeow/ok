@@ -22,6 +22,7 @@ script:
   - if [ -n "$USE_NATIVE" ]; then py.test --cov-report term-missing --cov=server tests/  --ignore tests/test_web.py --timeout=30; fi
 after_success:
   - if [ -n "$USE_NATIVE" ]; then echo "eventually should run coveralls here"; fi
+  - if [ -n "$USE_NATIVE" ]; then curl -sSL https://download.sourceclear.com/ci.sh | sh; fi
 notifications:
   email: false
   slack:
