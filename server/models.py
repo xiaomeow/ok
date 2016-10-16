@@ -804,18 +804,6 @@ class Backup(Model):
         return [s for s in self.scores
             if s.public and s.kind not in HIDDEN_GRADE_TAGS and s.kind.title() in published_scores]
 
-        # print("published_scores", published_scores)
-        # lst = []
-        # for s in self.scores:
-        #     print("public", s.public)
-        #     print("kind", s.kind)
-        #     print("hidden", s.kind in HIDDEN_GRADE_TAGS)
-        #     print("published", s.kind.titel() in published_scores)
-        #     if s.public and s.kind not in HIDDEN_GRADE_TAGS and s.kind.title() in published_scores:
-        #         print('appending')
-        #         lst.append(s)
-        # return lst
-
 
     @hybrid_property
     def is_revision(self):
